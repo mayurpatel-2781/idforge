@@ -1,0 +1,8 @@
+tests/
+*.test.js
+test-*.js
+.github/
+.eslintrc*
+.prettierrc*
+coverage/
+*.log

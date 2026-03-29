@@ -1,0 +1,58 @@
+{
+  "name": "idforge",
+  "version": "1.0.0",
+  "description": "The world's most complete ID toolkit — 219 exports, 90+ functions. UUID, ULID, KSUID, Snowflake, NanoID, Semantic IDs, Lifecycle IDs, Topology IDs, Fuzzy IDs, Compound IDs, Hierarchy IDs, Collision Detection, Federation, GDPR/HIPAA Compliance, Dashboard, Batch Verification, Query System, Plugin Middleware, Async Streaming, TypeScript support and more.",
+  "main": "src/index.js",
+  "types": "types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./collision": "./src/collision.js",
+    "./compliance": "./src/compliance.js",
+    "./federation": "./src/federation.js",
+    "./dashboard": "./src/dashboard.js",
+    "./decoder": "./src/decoder.js",
+    "./query": "./src/query.js",
+    "./devtools": "./src/devtools.js"
+  },
+  "files": [
+    "src/",
+    "types/",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test":           "node test-v3.js && node test-v4.js && node test-v5.js && node test-v6.js",
+    "test:v3":        "node test-v3.js",
+    "test:v4":        "node test-v4.js",
+    "test:v5":        "node test-v5.js",
+    "test:v6":        "node test-v6.js",
+    "prepublishOnly": "npm test"
+  },
+  "keywords": [
+    "uuid", "ulid", "ksuid", "snowflake", "nanoid",
+    "id-generator", "unique-id", "identifier",
+    "semantic-id", "lifecycle-id", "topology-id",
+    "deterministic", "entropy", "collision-detection",
+    "gdpr", "hipaa", "compliance", "pii-scanner",
+    "federation", "distributed", "rate-limiter",
+    "fuzzy-id", "compound-id", "hierarchy-id",
+    "id-toolkit", "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/idforge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/idforge/issues"
+  },
+  "homepage": "https://github.com/YOUR_USERNAME/idforge#readme"
+}
