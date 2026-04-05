@@ -232,7 +232,7 @@ function generateComplianceReport(ids, opts = {}) {
     checkResidency = true,
     allowedRegions,
     reportId      = crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(8).toString('hex'),
-    generatedBy   = 'uniqid-pro',
+    generatedBy   = 'uuid-lab',
     environment   = 'production',
   } = opts;
 

@@ -16,7 +16,7 @@ const { nanoId } = require('./generators');
  * @returns {string}
  */
 function linkedId(parentId, opts = {}) {
-  const { type = 'child', index = 0, secret = 'uniqid-link-v1' } = opts;
+  const { type = 'child', index = 0, secret = 'uuid-lab-link-v1' } = opts;
   // Short fingerprint of parent — 8 hex chars
   const fingerprint = crypto
     .createHmac('sha256', secret)
@@ -37,7 +37,7 @@ function linkedId(parentId, opts = {}) {
  * @returns {boolean}
  */
 function verifyLink(childId, parentId, opts = {}) {
-  const { secret = 'uniqid-link-v1' } = opts;
+  const { secret = 'uuid-lab-link-v1' } = opts;
   const parts = childId.split('_');
   if (parts.length < 3) return false;
   const embeddedFingerprint = parts[1];
@@ -63,7 +63,7 @@ const _lineage = new Map();
  * @returns {string}
  */
 function deriveId(parentId, opts = {}) {
-  const { reason = 'derived', index = 0, secret = 'uniqid-lineage-v1' } = opts;
+  const { reason = 'derived', index = 0, secret = 'uuid-lab-lineage-v1' } = opts;
 
   const parentHash = crypto
     .createHmac('sha256', secret)
@@ -91,7 +91,7 @@ function deriveId(parentId, opts = {}) {
  * @returns {boolean}
  */
 function isDescendantOf(childId, ancestorId, opts = {}) {
-  const { secret = 'uniqid-lineage-v1' } = opts;
+  const { secret = 'uuid-lab-lineage-v1' } = opts;
   const parts = childId.split('_');
   if (parts.length < 3) return false;
 

@@ -2,7 +2,7 @@
 'use strict';
 
 /**
- * uniqid-pro v4.0.0
+ * uuid-lab v4.0.0
  * v4 adds 7 new features:
  *   1. Fuzzy / Typo-Resistant IDs  (Crockford Base32 + Luhn checksum + auto-correct)
  *   2. Composite / Compound IDs    (reversible multi-ID encoding for join tables)

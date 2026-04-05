@@ -46,7 +46,7 @@ const LEVELS = { silent: 0, error: 1, warn: 2, info: 3, debug: 4 };
 class Logger {
   constructor(opts = {}) {
     this._level    = LEVELS[opts.level ?? 'warn'] ?? 2;
-    this._prefix   = opts.prefix ?? '[uniqid-pro]';
+    this._prefix   = opts.prefix ?? '[uuid-lab]';
     this._handlers = [];
     this._history  = [];
     this._maxHistory = opts.maxHistory ?? 500;

@@ -291,7 +291,7 @@ class Dashboard {
     const s = snap ?? await this.snapshot();
     const lines = [
       '┌─────────────────────────────────────────────────┐',
-      `│  uniqid-pro dashboard  •  uptime: ${s.uptimeHuman.padEnd(13)}│`,
+      `│  uuid-lab dashboard  •  uptime: ${s.uptimeHuman.padEnd(13)}│`,
       '├──────────────┬──────────────┬────────────────────┤',
       `│  gen/sec     │  p99 latency │  collisions        │`,
       `│  ${String(s.generation.ratePerSec).padEnd(12)}│  ${s.latency ? s.latency.p99+'ms' : 'n/a'.padEnd(10)}  │  ${String(s.collisions.total).padEnd(18)}│`,

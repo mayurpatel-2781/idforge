@@ -1,25 +1,25 @@
 {
-  "name": "idforge",
-  "version": "1.0.0",
-  "description": "The world's most complete ID toolkit — 219 exports, 90+ functions. UUID, ULID, KSUID, Snowflake, NanoID, Semantic IDs, Lifecycle IDs, Topology IDs, Fuzzy IDs, Compound IDs, Hierarchy IDs, Collision Detection, Federation, GDPR/HIPAA Compliance, Dashboard, Batch Verification, Query System, Plugin Middleware, Async Streaming, TypeScript support and more.",
-  "main": "src/index.js",
-  "types": "types/index.d.ts",
+  "name": "uuid-lab",
+  "version": "1.0.1",
+  "description": "The world's most complete ID toolkit — 219 exports, 90+ functions, 535 passing tests. UUID, ULID, KSUID, Snowflake, NanoID, Semantic IDs, Lifecycle IDs, Topology IDs, Fuzzy IDs, Compound IDs, Hierarchy IDs, Collision Detection, Federation, GDPR/HIPAA Compliance, Dashboard, Batch Verification, Query System, Plugin Middleware, Async Streaming, TypeScript support and more.",
+  "main": "index.js",
+  "types": "index.d.ts",
   "exports": {
     ".": {
-      "require": "./src/index.js",
-      "default": "./src/index.js"
+      "require": "./index.js",
+      "default": "./index.js"
     },
-    "./collision": "./src/collision.js",
-    "./compliance": "./src/compliance.js",
-    "./federation": "./src/federation.js",
-    "./dashboard": "./src/dashboard.js",
-    "./decoder": "./src/decoder.js",
-    "./query": "./src/query.js",
-    "./devtools": "./src/devtools.js"
+    "./collision": "./collision.js",
+    "./compliance": "./compliance.js",
+    "./federation": "./federation.js",
+    "./dashboard": "./dashboard.js",
+    "./decoder": "./decoder.js",
+    "./query": "./query.js",
+    "./devtools": "./devtools.js"
   },
   "files": [
-    "src/",
-    "types/",
+    "*.js",
+    "*.d.ts",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
@@ -40,19 +40,19 @@
     "gdpr", "hipaa", "compliance", "pii-scanner",
     "federation", "distributed", "rate-limiter",
     "fuzzy-id", "compound-id", "hierarchy-id",
-    "id-toolkit", "typescript"
+    "id-toolkit", "typescript", "uuid-lab"
   ],
-  "author": "",
+  "author": "mayurpatel-2781",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/idforge.git"
+    "url": "https://github.com/mayurpatel-2781/idforge.git"
   },
   "bugs": {
-    "url": "https://github.com/YOUR_USERNAME/idforge/issues"
+    "url": "https://github.com/mayurpatel-2781/idforge/issues"
   },
-  "homepage": "https://github.com/YOUR_USERNAME/idforge#readme"
+  "homepage": "https://github.com/mayurpatel-2781/idforge#readme"
 }

@@ -12,7 +12,7 @@ const crypto = require('crypto');
 // ── Global Config ─────────────────────────────────────────────────────────────
 
 let _config = {
-  defaultSecret:    'uniqid-pro-default',
+  defaultSecret:    'uuid-lab-default',
   defaultSize:      21,
   defaultAlphabet:  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_',
   defaultNamespace: 'default',
