@@ -189,4 +189,5 @@ function _format(normalized) {
   return (normalized.match(/.{1,4}/g) || [normalized]).join('-');
 }
 
+
 module.exports = { fuzzyId, validateFuzzy, correctFuzzy, parseFuzzy, CROCKFORD };

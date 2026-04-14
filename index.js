@@ -296,3 +296,91 @@ Object.assign(module.exports, {
   generateTypeScript: docgen_mod.generateTypeScript,
   generateDocs: docgen_mod.generateDocs,
 });
+
+// ══ v7 NEW FEATURES ═══════════════════════════════════════════════
+const format_mod    = require('./format');
+const advanced_mod  = require('./advanced');
+const namespace_mod = require('./namespace');
+const timeid_mod    = require('./timeid');
+const analytics_mod = require('./analytics');
+
+Object.assign(module.exports, {
+  // Format & Encoding
+  prefixedId: format_mod.prefixedId,
+  shortId: format_mod.shortId,
+  customLengthId: format_mod.customLengthId,
+  urlSafeId: format_mod.urlSafeId,
+  base62Id: format_mod.base62Id,
+  base36Id: format_mod.base36Id,
+  encodeBase62: format_mod.encodeBase62,
+  decodeBase62: format_mod.decodeBase62,
+  encodeBase36: format_mod.encodeBase36,
+  decodeBase36: format_mod.decodeBase36,
+  visualId: format_mod.visualId,
+  emojiId: format_mod.emojiId,
+  compactId: format_mod.compactId,
+
+  // Advanced Features
+  hashId: advanced_mod.hashId,
+  shortHashId: advanced_mod.shortHashId,
+  seededId: advanced_mod.seededId,
+  createSeededGenerator: advanced_mod.createSeededGenerator,
+  createOneTimeStore: advanced_mod.createOneTimeStore,
+  createBlacklist: advanced_mod.createBlacklist,
+  entropyId: advanced_mod.entropyId,
+  adaptiveId: advanced_mod.adaptiveId,
+  registerUseCase: advanced_mod.registerUseCase,
+  listUseCases: advanced_mod.listUseCases,
+  predictCollision: advanced_mod.predictCollision,
+  compressId: advanced_mod.compressId,
+  decompressId: advanced_mod.decompressId,
+  offlineId: advanced_mod.offlineId,
+
+  // Namespace
+  defineNamespace: namespace_mod.defineNamespace,
+  namespaceId: namespace_mod.namespaceId,
+  belongsTo: namespace_mod.belongsTo,
+  detectNamespace: namespace_mod.detectNamespace,
+  listNamespaces: namespace_mod.listNamespaces,
+  getNamespace: namespace_mod.getNamespace,
+  setEnvironment: namespace_mod.setEnvironment,
+  getEnvironment: namespace_mod.getEnvironment,
+  envId: namespace_mod.envId,
+  reactHookCode: namespace_mod.reactHookCode,
+  vueComposableCode: namespace_mod.vueComposableCode,
+
+  // Time-based IDs
+  timestampId: timeid_mod.timestampId,
+  extractTime: timeid_mod.extractTime,
+  timeWindowId: timeid_mod.timeWindowId,
+  epochDayId: timeid_mod.epochDayId,
+  contextId: timeid_mod.contextId,
+  meaningfulId: timeid_mod.meaningfulId,
+  pronounceableId: timeid_mod.pronounceableId,
+  multiFormatId: timeid_mod.multiFormatId,
+  listFormats: timeid_mod.listFormats,
+
+  // Analytics & Debug
+  analytics: analytics_mod.analytics,
+  enableDebug: analytics_mod.enableDebug,
+  disableDebug: analytics_mod.disableDebug,
+  isDebugMode: analytics_mod.isDebugMode,
+  debugWrap: analytics_mod.debugWrap,
+  getDebugLog: analytics_mod.getDebugLog,
+  clearDebugLog: analytics_mod.clearDebugLog,
+  inspectId: analytics_mod.inspectId,
+  apiGenerate: analytics_mod.apiGenerate,
+});
+
+// ══ v8 REMAINING FEATURES ══════════════════════════════════════════
+const chain_mod = require('./chain');
+Object.assign(module.exports, {
+  // Blockchain-style IDs
+  createChain: chain_mod.createChain,
+  IdChain:     chain_mod.IdChain,
+  idToQrAscii: chain_mod.idToQrAscii,
+  idToQrDataUrl: chain_mod.idToQrDataUrl,
+  // High-performance pool
+  createHighPerfPool: chain_mod.createHighPerfPool,
+  HighPerformancePool: chain_mod.HighPerformancePool,
+});

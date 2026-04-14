@@ -1,46 +1,77 @@
 {
   "name": "uuid-lab",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "description": "The world's most complete ID toolkit — 219 exports, 90+ functions, 535 passing tests. UUID, ULID, KSUID, Snowflake, NanoID, Semantic IDs, Lifecycle IDs, Topology IDs, Fuzzy IDs, Compound IDs, Hierarchy IDs, Collision Detection, Federation, GDPR/HIPAA Compliance, Dashboard, Batch Verification, Query System, Plugin Middleware, Async Streaming, TypeScript support and more.",
   "main": "index.js",
   "types": "index.d.ts",
   "exports": {
     ".": {
       "require": "./index.js",
+      "import": "./esm.mjs",
       "default": "./index.js"
     },
+    "./esm": "./esm.mjs",
+    "./browser": "./browser.js",
     "./collision": "./collision.js",
     "./compliance": "./compliance.js",
     "./federation": "./federation.js",
     "./dashboard": "./dashboard.js",
     "./decoder": "./decoder.js",
     "./query": "./query.js",
-    "./devtools": "./devtools.js"
+    "./devtools": "./devtools.js",
+    "./chain": "./chain.js",
+    "./format": "./format.js",
+    "./advanced": "./advanced.js",
+    "./namespace": "./namespace.js",
+    "./timeid": "./timeid.js",
+    "./analytics": "./analytics.js"
   },
   "files": [
     "*.js",
+    "*.mjs",
     "*.d.ts",
+    "bin/",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
-    "test":           "node test-v3.js && node test-v4.js && node test-v5.js && node test-v6.js",
-    "test:v3":        "node test-v3.js",
-    "test:v4":        "node test-v4.js",
-    "test:v5":        "node test-v5.js",
-    "test:v6":        "node test-v6.js",
-    "prepublishOnly": "npm test"
+    "test": "node test-v3.js && node test-v4.js && node test-v5.js && node test-v6.js && node test-v7.js && node test-v8.js",
+    "test:v3": "node test-v3.js",
+    "test:v4": "node test-v4.js",
+    "test:v5": "node test-v5.js",
+    "test:v6": "node test-v6.js",
+    "prepublishOnly": "npm test",
+    "test:v8": "node test-v8.js"
   },
   "keywords": [
-    "uuid", "ulid", "ksuid", "snowflake", "nanoid",
-    "id-generator", "unique-id", "identifier",
-    "semantic-id", "lifecycle-id", "topology-id",
-    "deterministic", "entropy", "collision-detection",
-    "gdpr", "hipaa", "compliance", "pii-scanner",
-    "federation", "distributed", "rate-limiter",
-    "fuzzy-id", "compound-id", "hierarchy-id",
-    "id-toolkit", "typescript", "uuid-lab"
+    "uuid",
+    "ulid",
+    "ksuid",
+    "snowflake",
+    "nanoid",
+    "id-generator",
+    "unique-id",
+    "identifier",
+    "semantic-id",
+    "lifecycle-id",
+    "topology-id",
+    "deterministic",
+    "entropy",
+    "collision-detection",
+    "gdpr",
+    "hipaa",
+    "compliance",
+    "pii-scanner",
+    "federation",
+    "distributed",
+    "rate-limiter",
+    "fuzzy-id",
+    "compound-id",
+    "hierarchy-id",
+    "id-toolkit",
+    "typescript",
+    "uuid-lab"
   ],
   "author": "mayurpatel-2781",
   "license": "MIT",
@@ -54,5 +85,8 @@
   "bugs": {
     "url": "https://github.com/mayurpatel-2781/idforge/issues"
   },
-  "homepage": "https://github.com/mayurpatel-2781/idforge#readme"
+  "homepage": "https://github.com/mayurpatel-2781/idforge#readme",
+  "bin": {
+    "uuid-lab": "./bin/uuid-lab.js"
+  }
 }

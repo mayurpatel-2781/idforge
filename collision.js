@@ -250,9 +250,9 @@ class CollisionDetector {
    * @param {{ meta? }} opts
    */
   async checkAndRegister(id, opts = {}) {
-    const result = await this.register(id, { ...opts, throwOnCollision: false });
-    return { ok: result.registered, id, collision: result.collision };
-  }
+  const result = await this.register(id, { ...opts, throwOnCollision: false });
+  return { ok: result.registered, id, collision: result.collision };
+}
 
   /**
    * Register many IDs at once. Returns { registered[], collisions[] }.

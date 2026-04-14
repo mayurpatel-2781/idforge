@@ -102,7 +102,7 @@ class PersistentStore {
  * @param {{ backend?, filePath? }} opts
  */
 function createStore(opts = {}) {
-  return new PersistentStore(opts);
+  return new PersistentStore(opts); // has addLineageEntry ✅
 }
 
 module.exports = { PersistentStore, MemoryStorageBackend, FileStorageBackend, createStore };
