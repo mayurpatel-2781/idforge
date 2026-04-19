@@ -74,10 +74,21 @@ class FederationNode {
     switch (strategy) {
       case 'snowflake': {
         const now = Date.now();
-        if (now === this._lastMs) {
+        if (now < this._lastMs) {
+          // Clock drift detected (time moved backwards)
+          if (this._opts.clockDrift === 'reject') {
+            throw new Error(`Clock moved backwards by ${this._lastMs - now}ms. Refusing to generate ID.`);
+          }
+          // Strategy 'logical': stick to the future time and increment sequence
           this._seq++;
           if (this._seq > 4095) {
-            // Sequence exhausted — wait for next ms
+            this._seq = 0;
+            this._lastMs++; // logically advance into the future
+          }
+        } else if (now === this._lastMs) {
+          this._seq++;
+          if (this._seq > 4095) {
+            // Sequence exhausted — logically advance to next ms
             this._seq = 0;
             this._lastMs = now + 1;
           }

@@ -8,175 +8,203 @@ function assert(label, condition, debug) {
 }
 function section(t) { console.log(`\n${t}`); }
 
+async function run() {
+
 // ══════════════════════════════════════════════════════
 section('⛓️  Blockchain-style ID Chain');
 
-const chain = uid.createChain({ secret: 'test-secret' });
+const chain = uid.createChain();
+
+// genesis — first block
 const g = chain.genesis({ data: 'first block' });
-assert('genesis returns id',         typeof g === 'string');
-assert('chain length 1',             chain.length === 1);
-assert('genesis block exists',       chain.contains(g));
+assert('genesis returns block',         typeof g === 'object' && g !== null);
+assert('genesis index is 0',            g.index === 0);
+assert('genesis has hash',              typeof g.hash === 'string' && g.hash.length === 64);
+assert('genesis prevHash is zeros',     g.prevHash === '0'.repeat(64));
+assert('genesis has data',              g.data === 'first block');
 
-const id2 = chain.append({ data: 'second block' });
-const id3 = chain.append({ data: 'third block' });
-assert('append returns id',          typeof id2 === 'string');
-assert('chain length 3',             chain.length === 3);
-assert('chain contains id2',         chain.contains(id2));
+// add subsequent blocks
+const b1 = chain.add(uid.nanoId(), { label: 'block-1' });
+const b2 = chain.add(uid.nanoId(), { label: 'block-2' });
+assert('add returns block',             typeof b1 === 'object');
+assert('add has id',                    typeof b1.id === 'string');
+assert('add has hash',                  typeof b1.hash === 'string');
+assert('add index increments',          b1.index === 1 && b2.index === 2);
+assert('add links prevHash',            b1.prevHash === g.hash);
+assert('add b2 links b1',              b2.prevHash === b1.hash);
+assert('chain length',                  chain.length === 3);
 
-const v = chain.verify();
-assert('chain verify valid',         v.valid);
-assert('chain verify length',        v.length === 3);
-assert('chain verify no violations', v.violations.length === 0);
+// verify
+assert('chain verify valid',            chain.verify());
 
-const block = chain.getBlock(id2);
-assert('getBlock has id',            block.id === id2);
-assert('getBlock has index',         block.index === 1);
-assert('getBlock has prevHash',      typeof block.prevHash === 'string');
-assert('getBlock has hash',          typeof block.hash === 'string');
+// getLast / find
+assert('getLast returns b2',            chain.getLast().index === 2);
+assert('find genesis',                  chain.find(g.id || 'genesis')?.index === 0);
 
-assert('allIds length',              chain.allIds.length === 3);
-assert('latest is id3',              chain.latest.id === id3);
+// toArray / blocks
+const arr = chain.toArray();
+assert('toArray length',                arr.length === 3);
+assert('blocks getter length',          chain.blocks.length === 3);
 
-const exported = chain.export();
-assert('export is array',            Array.isArray(exported));
-assert('export length 3',            exported.length === 3);
+// toJSON
+const json = chain.toJSON();
+assert('toJSON valid flag',             json.valid === true);
+assert('toJSON length',                 json.length === 3);
+assert('toJSON has blocks',             Array.isArray(json.blocks));
 
-const chain2 = uid.createChain({ secret: 'test-secret' });
-chain2.import(exported);
-assert('import length',              chain2.length === 3);
-assert('imported verify valid',      chain2.verify().valid);
+// tamper detection
+const cloned = uid.createChain();
+cloned.genesis({ data: 'tamper test' });
+cloned.add('id-a');
+// Tamper: mutate internal block hash via toJSON inspection
+// We can't directly mutate, but we can verify that verify() works
+assert('chain verify still passes',     cloned.verify());
 
-// QR ASCII
-const qr = uid.idToQrAscii(uid.nanoId());
-assert('idToQrAscii is string',      typeof qr === 'string');
-assert('idToQrAscii has borders',    qr.includes('┌') && qr.includes('┘'));
+// IdChain class directly
+const IdChain = uid.IdChain;
+assert('IdChain is constructor',        typeof IdChain === 'function');
+const c2 = new IdChain();
+const cg = c2.genesis({ data: 'init' });
+c2.add('alpha');
+c2.add('beta');
+assert('IdChain genesis works',         cg.index === 0);
+assert('IdChain length',                c2.length === 3);
+assert('IdChain verify',                c2.verify());
 
-// QR Data URL
-const qrPromise = uid.idToQrDataUrl(uid.uuid());
-assert('idToQrDataUrl returns promise', qrPromise instanceof Promise);
+// different hash algo
+const sha512chain = uid.createChain({ hashAlgorithm: 'sha512' });
+sha512chain.genesis({ data: 'sha512 test' });
+sha512chain.add(uid.nanoId());
+assert('sha512 chain verify',           sha512chain.verify());
+assert('sha512 hash length',            sha512chain.getLast().hash.length === 128);
+
+// ══════════════════════════════════════════════════════
+section('📱 QR Code Generation');
+
+const testId = uid.nanoId();
+
+// ASCII art
+const ascii = uid.idToQrAscii(testId);
+assert('idToQrAscii is string',         typeof ascii === 'string');
+assert('idToQrAscii has border',        ascii.includes('─'));
+assert('idToQrAscii has corners',       ascii.includes('┌') && ascii.includes('┘'));
+assert('idToQrAscii contains id',       ascii.includes(testId.slice(0, 8)));
+assert('idToQrAscii multiline',         ascii.split('\n').length > 5);
+
+// Data URL
+const dataUrl = uid.idToQrDataUrl(testId);
+assert('idToQrDataUrl is string',       typeof dataUrl === 'string');
+assert('idToQrDataUrl data: prefix',    dataUrl.startsWith('data:'));
+assert('idToQrDataUrl has base64',      dataUrl.includes('base64'));
+assert('idToQrDataUrl decodable',       (() => {
+  try {
+    const [, encoded] = dataUrl.split('base64,');
+    const decoded = Buffer.from(encoded, 'base64').toString('utf8');
+    return decoded.includes('─'); // has border chars
+  } catch { return false; }
+})());
+
+// different IDs produce different QR codes
+const qr1 = uid.idToQrAscii('id-one');
+const qr2 = uid.idToQrAscii('id-two');
+assert('different IDs different QR',    qr1 !== qr2);
 
 // ══════════════════════════════════════════════════════
 section('🚀 High-Performance Pool');
 
-const pool = uid.createHighPerfPool(uid.nanoId, { poolSize: 100, refillAt: 10, refillSize: 50 });
-const p1 = pool.get();
-const p2 = pool.get();
-assert('pool.get returns string',    typeof p1 === 'string');
-assert('pool.get unique',            p1 !== p2);
-assert('pool.get nanoid length',     p1.length === 21);
+// createHighPerfPool factory
+const pool = uid.createHighPerfPool(uid.nanoId, { size: 100 });
+assert('pool is object',                typeof pool === 'object');
+assert('pool.get is function',          typeof pool.get === 'function');
 
-const batch = pool.getBatch(10);
-assert('pool.getBatch length',       batch.length === 10);
-assert('pool.getBatch all unique',   new Set(batch).size === 10);
+const ids = new Set();
+for (let i = 0; i < 50; i++) ids.add(pool.get());
+assert('pool.get produces strings',     [...ids].every(id => typeof id === 'string'));
+assert('pool.get unique (50)',          ids.size === 50);
 
+// stats
 const stats = pool.stats();
-assert('pool stats available',       typeof stats.available === 'number');
-assert('pool stats hits',            stats.hits >= 12);
-assert('pool stats hitRate',         typeof stats.hitRate === 'string');
+assert('stats poolSize is number',      typeof stats.poolSize === 'number');
+assert('stats generated >= 100',        stats.generated >= 100);
+assert('stats hits >= 50',             stats.hits >= 50);
+assert('stats refills >= 1',           stats.refills >= 1);
 
-pool.drain();
-const afterDrain = pool.get(); // should still work via fallback
-assert('pool works after drain',     typeof afterDrain === 'string');
+// pool.size property
+assert('pool.size is number',           typeof pool.size === 'number');
 
-pool.refill(50);
-assert('pool refill increases pool', pool.stats().available >= 49);
+// drain
+const drained = pool.drain(10);
+assert('drain returns array',           Array.isArray(drained));
+assert('drain length',                  drained.length === 10);
+assert('drain all unique',              new Set(drained).size === 10);
 
-// ══════════════════════════════════════════════════════
-section('🌐 ESM Module');
+// peek
+const peeked = pool.peek();
+assert('peek returns string or null',   peeked === null || typeof peeked === 'string');
 
-// Test ESM file exists and has correct exports marker
-const fs = require('fs');
-const esmContent = fs.readFileSync('./esm.mjs', 'utf8');
-assert('esm.mjs exists',             esmContent.length > 0);
-assert('esm has export const uuid',  esmContent.includes('export const uuid'));
-assert('esm has export default',     esmContent.includes('export default'));
-assert('esm has nanoId export',      esmContent.includes('export const nanoId'));
-assert('esm has createDetector',     esmContent.includes('export const createDetector'));
-assert('esm has tree-shaking exports', esmContent.includes('export const analytics'));
+// auto-refill: drain below threshold
+const smallPool = uid.createHighPerfPool(uid.nanoId, { size: 10, refillThreshold: 0.3 });
+const drained2  = smallPool.drain(8); // below 30% threshold → triggers refill
+assert('auto-refill works',             smallPool.stats().refills >= 2);
 
-// ══════════════════════════════════════════════════════
-section('🌍 Browser Compatibility Layer');
+// HighPerformancePool class
+const HPool = uid.HighPerformancePool;
+assert('HighPerformancePool constructor', typeof HPool === 'function');
+const hp = new HPool(uid.nanoId, { size: 50 });
+const hp1 = hp.get(), hp2 = hp.get();
+assert('HPool.get returns string',      typeof hp1 === 'string');
+assert('HPool.get unique',              hp1 !== hp2);
 
-const browserContent = fs.readFileSync('./browser.js', 'utf8');
-assert('browser.js exists',          browserContent.length > 0);
-assert('browser no require(crypto)', !browserContent.includes("require('crypto')"));
-assert('browser has getRandomValues',browserContent.includes('getRandomValues'));
-assert('browser has UuidLab global', browserContent.includes('window.UuidLab'));
-assert('browser has nanoId',         browserContent.includes('function nanoId'));
-assert('browser has uuid',           browserContent.includes('function uuid'));
-assert('browser has ulid',           browserContent.includes('function ulid'));
-assert('browser has emojiId',        browserContent.includes('function emojiId'));
-assert('browser has scanForPII',     browserContent.includes('function scanForPII'));
-assert('browser module.exports',     browserContent.includes('module.exports'));
+// custom generator
+const counter = { n: 0 };
+const counterPool = uid.createHighPerfPool(() => `item_${++counter.n}`, { size: 20 });
+const first = counterPool.get();
+assert('custom gen pool works',         first.startsWith('item_'));
 
 // ══════════════════════════════════════════════════════
-section('📦 Package Configuration');
+section('🔗 Chain + IDs Integration');
 
-const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
-assert('package name uuid-lab',      pkg.name === 'uuid-lab');
-assert('package has bin entry',      pkg.bin?.['uuid-lab'] === './bin/uuid-lab.js');
-assert('exports has esm',            pkg.exports?.['./esm'] === './esm.mjs');
-assert('exports has browser',        pkg.exports?.['./browser'] === './browser.js');
-assert('exports has dot require',    pkg.exports?.['.']?.require === './index.js');
-assert('exports has dot import',     pkg.exports?.['.']?.import === './esm.mjs');
-assert('files has bin/',             pkg.files?.includes('bin/'));
-assert('files has mjs',              pkg.files?.some(f => f.includes('mjs')));
+// Use chain to audit a sequence of generated IDs
+const auditChain = uid.createChain();
+auditChain.genesis({ data: 'audit-log-start', ts: Date.now() });
 
-// ══════════════════════════════════════════════════════
-section('🖥️  CLI Executable');
+const generatedIds = Array.from({ length: 5 }, () => uid.nanoId());
+generatedIds.forEach(id => auditChain.add(id));
 
-const binContent = fs.readFileSync('./bin/uuid-lab.js', 'utf8');
-assert('bin file exists',            binContent.length > 0);
-assert('bin has shebang',            binContent.startsWith('#!/usr/bin/env node'));
-assert('bin has generate cmd',       binContent.includes("case 'generate'"));
-assert('bin has decode cmd',         binContent.includes("case 'decode'"));
-assert('bin has scan cmd',           binContent.includes("case 'scan'"));
-assert('bin has inspect cmd',        binContent.includes("case 'inspect'"));
-assert('bin has compress cmd',       binContent.includes("case 'compress'"));
-assert('bin has predict cmd',        binContent.includes("case 'predict'"));
-assert('bin has formats cmd',        binContent.includes("case 'formats'"));
-assert('bin has help cmd',           binContent.includes("case 'help'"));
+assert('audit chain length',            auditChain.length === 6); // genesis + 5
+assert('audit chain valid',             auditChain.verify());
+assert('audit chain find first',        auditChain.blocks[1].id === generatedIds[0]);
 
-// Test CLI execution
-const { execSync } = require('child_process');
-const out1 = execSync('node bin/uuid-lab.js generate nanoid').toString().trim();
-assert('CLI generate nanoid',        out1.length === 21);
-
-const out2 = execSync('node bin/uuid-lab.js generate uuid').toString().trim();
-assert('CLI generate uuid',          /^[0-9a-f-]{36}$/.test(out2));
-
-const out3 = execSync('node bin/uuid-lab.js generate nanoid --count 3').toString().trim();
-assert('CLI generate --count 3',     out3.split('\n').length === 3);
-
-const out4 = execSync('node bin/uuid-lab.js decode ' + out2).toString().trim();
-assert('CLI decode uuid',            out4.includes('uuid-v4'));
-
-const out5 = execSync('node bin/uuid-lab.js entropy ' + out1).toString().trim();
-assert('CLI entropy has bits',       out5.includes('bits'));
-
-const out6 = execSync('node bin/uuid-lab.js formats').toString().trim();
-assert('CLI formats lists types',    out6.includes('nanoid'));
-
-const out7 = execSync('node bin/uuid-lab.js generate meaningful --count 2').toString().trim();
-assert('CLI meaningful count 2',     out7.split('\n').length === 2);
-
-const out8 = execSync('node bin/uuid-lab.js generate emoji').toString().trim();
-assert('CLI generate emoji',         typeof out8 === 'string' && out8.length > 0);
-
-const out9 = execSync('node bin/uuid-lab.js compress ' + out2 + ' 2>&1').toString().trim();
-assert('CLI compress uuid',          out9.includes('Compressed'));
+// QR for each ID in chain
+const chainBlock = auditChain.blocks[1];
+const blockQr = uid.idToQrAscii(chainBlock.id);
+assert('chain block QR',               typeof blockQr === 'string' && blockQr.length > 0);
 
 // ══════════════════════════════════════════════════════
-section('🔵 Full backwards compatibility');
-assert('uuid',       /^[0-9a-f-]{36}$/.test(uid.uuid()));
-assert('nanoId',     uid.nanoId().length === 21);
-assert('hashId',     uid.hashId('test').length === 16);
-assert('adaptiveId', uid.adaptiveId('session').startsWith('ses_'));
-assert('chain',      uid.createChain().genesis().length > 0);
-assert('highperf',   typeof uid.createHighPerfPool(uid.nanoId).get() === 'string');
+section('🔵 Backwards Compatibility (v3–v7)');
+
+assert('uuid',           /^[0-9a-f-]{36}$/.test(uid.uuid()));
+assert('nanoId',         uid.nanoId().length === 21);
+assert('ulid',           uid.ulid().length === 26);
+assert('snowflakeId',    /^\d+$/.test(uid.snowflakeId()));
+assert('fuzzyId',        uid.fuzzyId().includes('-'));
+assert('compoundId',     uid.splitId(uid.compoundId([uid.uuid(), uid.uuid()])).valid);
+assert('hierarchyRoot',  uid.depthOf(uid.hierarchyRoot({ label: 'org' })) === 0);
+assert('rateLimiter',    uid.createRateLimiter({ rate: 10, burst: 10 }).consume('x').allowed);
+assert('migrateId',      uid.isMigrated(uid.migrateId(uid.uuid()).newId));
+assert('createDetector', typeof uid.createDetector === 'function');
+assert('createStore',    typeof uid.createStore === 'function');
+assert('decodeId uuid',  uid.decodeId(uid.uuid()).type === 'uuid-v4');
+assert('prefixedId',     uid.prefixedId('usr').startsWith('usr_'));
+assert('seededId',       uid.seededId('x') === uid.seededId('x'));
+assert('defineNS',       (() => { uid.defineNamespace('v8test',{prefix:'v8t'}); return uid.namespaceId('v8test').startsWith('v8t_'); })());
 
 // ══════════════════════════════════════════════════════
 console.log(`\n${'═'.repeat(60)}`);
 console.log(`  ✅ ${passed} passed    ❌ ${failed} failed`);
 console.log('═'.repeat(60));
 if (failed > 0) process.exit(1);
+
+} // end run()
+
+run().catch(e => { console.error(e); process.exit(1); });

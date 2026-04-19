@@ -84,6 +84,10 @@ class MemoryBackend {
     return this._store.get(namespace)?.has(id) ?? false;
   }
 
+  async get(namespace, id) {
+    return this._store.get(namespace)?.get(id) || null;
+  }
+
   async add(namespace, id, meta = {}) {
     if (!this._store.has(namespace)) this._store.set(namespace, new Map());
     this._store.get(namespace).set(id, { id, registeredAt: Date.now(), ...meta });
@@ -125,6 +129,11 @@ class RedisBackendAdapter {
 
   async has(namespace, id) {
     return !!(await this._client.exists(this._key(namespace, id)));
+  }
+
+  async get(namespace, id) {
+    const data = await this._client.get(this._key(namespace, id));
+    return data ? JSON.parse(data) : null;
   }
 
   async add(namespace, id, meta = {}) {
@@ -250,9 +259,71 @@ class CollisionDetector {
    * @param {{ meta? }} opts
    */
   async checkAndRegister(id, opts = {}) {
-  const result = await this.register(id, { ...opts, throwOnCollision: false });
-  return { ok: result.registered, id, collision: result.collision };
-}
+    const result = await this.register(id, { ...opts, throwOnCollision: false });
+    return { ok: result.registered, id, collision: result.collision };
+  }
+
+  /**
+   * Reserve an ID temporarily.
+   * @param {string} id
+   * @param {{ ttlMs?: number, meta?: object }} opts
+   */
+  async reserve(id, opts = {}) {
+    const { ttlMs = 60000, meta = {} } = opts;
+    
+    // Check uniqueness, allowing expired reservations to be overwritten
+    const existing = await this._backend.get(this.namespace, id);
+    if (existing) {
+      if (existing._reserved && existing._expires < Date.now()) {
+        // Expired reservation, we can take it
+      } else {
+        return { reserved: false, id, collision: true };
+      }
+    } else {
+      const check = await this.isUnique(id);
+      if (!check.unique) return { reserved: false, id, collision: true };
+    }
+    
+    const reservationId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+    await this._backend.add(this.namespace, id, { ...meta, _reserved: true, _reservationId: reservationId, _expires: Date.now() + ttlMs });
+    
+    // Add to bloom immediately to block fast-path checks
+    this._bloom.add(id);
+
+    return { reserved: true, id, reservationId, expiresAt: Date.now() + ttlMs };
+  }
+
+  /**
+   * Commit a previously reserved ID.
+   * @param {string} id
+   * @param {string} reservationId
+   */
+  async commitReservation(id, reservationId) {
+    const data = await this._backend.get(this.namespace, id);
+    if (!data) return { committed: false, error: 'Not found' };
+    if (!data._reserved) return { committed: false, error: 'Not a reservation' };
+    if (data._reservationId !== reservationId) return { committed: false, error: 'Reservation ID mismatch' };
+    if (data._expires < Date.now()) return { committed: false, error: 'Reservation expired' };
+
+    delete data._reserved;
+    delete data._reservationId;
+    delete data._expires;
+    await this._backend.add(this.namespace, id, data);
+    this._stats.registrations++;
+    return { committed: true, id };
+  }
+
+  /**
+   * Release a reservation early.
+   * @param {string} id
+   * @param {string} reservationId
+   */
+  async releaseReservation(id, reservationId) {
+    const data = await this._backend.get(this.namespace, id);
+    if (!data || !data._reserved || data._reservationId !== reservationId) return false;
+    await this._backend.delete(this.namespace, id);
+    return true;
+  }
 
   /**
    * Register many IDs at once. Returns { registered[], collisions[] }.

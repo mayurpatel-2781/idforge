@@ -56,6 +56,10 @@ export const encryptId       = uid.encryptId;
 export const decryptId       = uid.decryptId;
 export const expiringId      = uid.expiringId;
 export const checkExpiry     = uid.checkExpiry;
+export const tokenId         = uid.tokenId;
+export const verifyTokenId   = uid.verifyTokenId;
+export const commitId        = uid.commitId;
+export const verifyCommitment= uid.verifyCommitment;
 
 // ── Advanced ──────────────────────────────────────────────────────────────────
 export const hashId              = uid.hashId;
@@ -70,6 +74,15 @@ export const offlineId           = uid.offlineId;
 export const compressId          = uid.compressId;
 export const decompressId        = uid.decompressId;
 export const predictCollision    = uid.predictCollision;
+export const compileTemplate     = uid.compileTemplate;
+export const recommendId         = uid.recommendId;
+export const expressMiddleware   = uid.expressMiddleware;
+export const mongoosePlugin      = uid.mongoosePlugin;
+export const sequelizeAdapter    = uid.sequelizeAdapter;
+export const createGraphQLScalar = uid.createGraphQLScalar;
+export const ssrSafeId           = uid.ssrSafeId;
+export const createReactHooks    = uid.createReactHooks;
+export const createVueComposables= uid.createVueComposables;
 
 // ── Semantic & Relationship ───────────────────────────────────────────────────
 export const semanticId      = uid.semanticId;
@@ -227,9 +240,12 @@ export const debugWrap       = uid.debugWrap;
 export const inspectId       = uid.inspectId;
 export const apiGenerate     = uid.apiGenerate;
 
-// ── Performance ───────────────────────────────────────────────────────────────
+// ── Performance & Parallel ───────────────────────────────────────────────────
 export const batch           = uid.batch;
 export const createPool      = uid.createPool;
+export const generateParallel= uid.generateParallel;
+export const initWorkers     = uid.initWorkers;
+export const terminateWorkers= uid.terminateWorkers;
 
 // ── Default export (full module) ──────────────────────────────────────────────
 export default uid;
