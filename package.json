@@ -1,7 +1,7 @@
 {
   "name": "uuid-lab",
-  "version": "2.0.0",
-  "description": "The most advanced ID generation toolkit for Node.js & JS — UUID, ULID, NanoID, Snowflake, KSUID + Worker Threads, JWT-like Tokens, Zero-Knowledge IDs, ID DSL/Templates, Smart Recommendations, Express/Mongoose/GraphQL integrations, React/Vue/Next.js hooks, GDPR compliance, Collision Detection, Federation, Blockchain-style Chains, 738 tests.",
+  "version": "1.2.1",
+  "description": "The world's most complete ID toolkit — 219 exports, 90+ functions, 535 passing tests. UUID, ULID, KSUID, Snowflake, NanoID, Semantic IDs, Lifecycle IDs, Topology IDs, Fuzzy IDs, Compound IDs, Hierarchy IDs, Collision Detection, Federation, GDPR/HIPAA Compliance, Dashboard, Batch Verification, Query System, Plugin Middleware, Async Streaming, TypeScript support and more.",
   "main": "index.js",
   "types": "index.d.ts",
   "exports": {
@@ -24,12 +24,7 @@
     "./advanced": "./advanced.js",
     "./namespace": "./namespace.js",
     "./timeid": "./timeid.js",
-    "./analytics": "./analytics.js",
-    "./parallel": "./parallel.js",
-    "./tokens": "./tokens.js",
-    "./template": "./template.js",
-    "./integrations": "./integrations.js",
-    "./frameworks": "./frameworks.js"
+    "./analytics": "./analytics.js"
   },
   "files": [
     "*.js",
