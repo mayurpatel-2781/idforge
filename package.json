@@ -1,6 +1,6 @@
 {
   "name": "uuid-lab",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "The world's most complete ID toolkit — 219 exports, 90+ functions, 535 passing tests. UUID, ULID, KSUID, Snowflake, NanoID, Semantic IDs, Lifecycle IDs, Topology IDs, Fuzzy IDs, Compound IDs, Hierarchy IDs, Collision Detection, Federation, GDPR/HIPAA Compliance, Dashboard, Batch Verification, Query System, Plugin Middleware, Async Streaming, TypeScript support and more.",
   "main": "index.js",
   "types": "index.d.ts",
