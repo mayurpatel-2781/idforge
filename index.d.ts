@@ -350,3 +350,95 @@ export function validateFuzzy(id: string): ValidationResult;
 export function correctFuzzy(id: string): { corrected: string | null; position?: number };
 export function parseFuzzy(id: string, opts?: { prefix?: string }): { prefix: string | null; body: string; checkChar: string; valid: boolean; raw: string };
 export const CROCKFORD: string;
+
+// ── Next-Gen Advanced Features (v9) ──────────────────────────────────────────
+
+export function holographicId(opts?: { size?: number }): string;
+export function verifyHolographic(id: string): boolean;
+export function repairHolographic(id: string): { valid: boolean; id?: string; repaired?: boolean; original?: string; reason?: string };
+
+export function steganoId(hiddenByte: number, key: string, opts?: { size?: number }): string;
+export function extractStegano(id: string, key: string): number | null;
+
+export function generatePowChallenge(opts?: { difficulty?: number }): { challenge: string; difficulty: number };
+export function solvePowChallenge(challenge: string, difficulty: number): { id: string; hash: string };
+export function verifyPow(id: string, difficulty: number): boolean;
+
+export function latticeId(opts?: { size?: number }): string;
+
+// ── Bleeding-Edge Features (v10) ─────────────────────────────────────────────
+
+export function fractalRoot(seed?: string | number): string;
+export function deriveFractalChild(parentId: string, index: string | number): string;
+
+export function hardwareId(opts?: object): string;
+export function verifyLocalHardware(id: string): boolean;
+
+export interface ZkpIdentity {
+  publicKey: string;
+  privateKey: string;
+}
+export function createZkpIdentity(): ZkpIdentity;
+export function generateZkpId(identity?: ZkpIdentity): string;
+export function createLinkProof(identity: ZkpIdentity, idA: string, idB: string): string;
+export function verifyLinkProof(idA: string, idB: string, proofToken: string, publicKey: string): boolean;
+
+export class AdaptiveGenerator {
+  constructor(opts?: { threshold?: number });
+  generate(contextString: string): string;
+  decompress(id: string): string;
+  stats(): { trackedPrefixes: number; compressedTokens: number; dictionary: Record<string, string> };
+}
+
+// ── Enterprise (Paid) ────────────────────────────────────────────────────────
+
+export class LamportClock {
+  constructor(nodeId?: string);
+  increment(): string;
+  update(remoteTime: string): void;
+  readonly nodeId: string;
+  counter: number;
+}
+
+export class VectorClock {
+  constructor(localNodeId?: string);
+  tick(): Record<string, number>;
+  merge(remoteClocks: Record<string, number>): void;
+  toString(): string;
+  readonly localId: string;
+}
+
+export class TokenManager {
+  constructor(storage?: any);
+  createToken(payload: object, ttlSeconds?: number): Promise<string>;
+  revokeToken(token: string): Promise<boolean>;
+  isValid(token: string): Promise<boolean>;
+}
+
+export function pqId(opts?: { size?: number; salt?: string }): string;
+
+export class AnomalyDetector {
+  constructor(opts?: { threshold?: number; windowSize?: number });
+  observe(value: number): { anomaly: boolean; score: number; mean?: number; stdDev?: number };
+}
+
+export class AlertManager {
+  constructor(opts?: { name?: string });
+  registerChannel(id: string, config: { type: 'webhook'; url: string; secret?: string }): AlertManager;
+  addRule(name: string, predicate: (event: string, data: any) => boolean, channelId: string): AlertManager;
+  notify(event: string, data?: any): Promise<any[]>;
+}
+
+export function toPrometheus(stats: Record<string, any>): string;
+export function generateEntropyHeatmap(ids: string[]): Array<{ id: string; bits: number; score: number; risk: string }> | null;
+
+export const enterprise: {
+  LamportClock: typeof LamportClock;
+  VectorClock: typeof VectorClock;
+  TokenManager: typeof TokenManager;
+  pqId: typeof pqId;
+  AnomalyDetector: typeof AnomalyDetector;
+  AlertManager: typeof AlertManager;
+  toPrometheus: typeof toPrometheus;
+  generateEntropyHeatmap: typeof generateEntropyHeatmap;
+};

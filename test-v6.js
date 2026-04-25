@@ -125,7 +125,7 @@ section('🔎 Features 6 & 15: Query + Tagging');
 
 const idx = uid.createIndex();
 const id1 = uid.uuid();
-const id2 = uid.nanoId();
+const id2 = 'aBcDeFgHiJkLmNoPqRsTu'; // Hardcoded NanoID to avoid accidental prefixed ID match
 const id3 = uid.ulid();
 
 idx.add(id1, { tags: ['user', 'active'], meta: { env: 'prod' } });

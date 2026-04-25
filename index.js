@@ -60,6 +60,9 @@ const tokens_mod    = require('./tokens');
 const template_mod  = require('./template');
 const integrations_mod = require('./integrations');
 const frameworks_mod = require('./frameworks');
+const enterprise_mod = require('./enterprise');
+const nextgen_mod    = require('./nextgen');
+const bleeding_mod   = require('./bleeding_edge');
 
 // ══════════════════════════════════════════════════════════════════════════════
 // UUID Helpers
@@ -543,6 +546,28 @@ module.exports = {
   inspectId:    analytics_mod.inspectId,
   apiGenerate:  analytics_mod.apiGenerate,
 
+  // ── v9: Next-Gen Advanced Features ───────────────────────────────────────────
+  holographicId:        nextgen_mod.holographicId,
+  verifyHolographic:    nextgen_mod.verifyHolographic,
+  repairHolographic:    nextgen_mod.repairHolographic,
+  steganoId:            nextgen_mod.steganoId,
+  extractStegano:       nextgen_mod.extractStegano,
+  generatePowChallenge: nextgen_mod.generatePowChallenge,
+  solvePowChallenge:    nextgen_mod.solvePowChallenge,
+  verifyPow:            nextgen_mod.verifyPow,
+  latticeId:            nextgen_mod.latticeId,
+
+  // ── v10: Bleeding-Edge Features ──────────────────────────────────────────────
+  fractalRoot:          bleeding_mod.fractalRoot,
+  deriveFractalChild:   bleeding_mod.deriveFractalChild,
+  hardwareId:           bleeding_mod.hardwareId,
+  verifyLocalHardware:  bleeding_mod.verifyLocalHardware,
+  createZkpIdentity:    bleeding_mod.createZkpIdentity,
+  generateZkpId:        bleeding_mod.generateZkpId,
+  createLinkProof:      bleeding_mod.createLinkProof,
+  verifyLinkProof:      bleeding_mod.verifyLinkProof,
+  AdaptiveGenerator:    bleeding_mod.AdaptiveGenerator,
+
   // ── v8: Blockchain Chain & Parallel ──────────────────────────────────────────
   IdChain:           chain_mod.IdChain,
   createChain:       chain_mod.createChain,
@@ -553,4 +578,16 @@ module.exports = {
   generateParallel:  parallel_mod.generateParallel,
   initWorkers:       parallel_mod.initWorkers,
   terminateWorkers:  parallel_mod.terminateWorkers,
+
+  // ── Enterprise (Paid) ────────────────────────────────────────────────────────
+  enterprise: {
+    LamportClock:           enterprise_mod.LamportClock,
+    VectorClock:            enterprise_mod.VectorClock,
+    TokenManager:           enterprise_mod.TokenManager,
+    pqId:                   enterprise_mod.pqId,
+    AnomalyDetector:        enterprise_mod.AnomalyDetector,
+    toPrometheus:           enterprise_mod.toPrometheus,
+    generateEntropyHeatmap: enterprise_mod.generateEntropyHeatmap,
+    AlertManager:           enterprise_mod.AlertManager,
+  }
 };
